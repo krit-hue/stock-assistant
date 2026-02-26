@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stock Assistant</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-yH3MCugrpY0+jrzhQ9W1qBbpjP8tng3m6t7q42MIj7o6ZtDx7ya3j+Z2Zqw3vMpUJ7M2NPx5EapHkC+G7wNfOw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!-- Embedded styles -->
+  <style>
+    /*
+     * Stylesheet for the Stock Assistant demo.
+     * Inspired by the design of the Krit‑hue personal assistant chat, with a clean
+     * modern look and easy readability. Colours are gentle to the eye and the
+     * layout adapts to different screen sizes.
+     */
+
+    /* CSS Variables allow easy theming */
+    :root {
+      --bg-gradient-start: #f6fbff;
+      --bg-gradient-end: #eaf4ff;
+      --primary-color: #2b8ea2;
+      --assistant-bg: #eef7f1;
+      --user-bg: #d9e7f1;
+      --text-color: #1f2a37;
+      --border-radius: 1rem;
+      --max-chat-width: 720px;
+      --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Roboto', sans-serif;
+      color: var(--text-color);
+      height: 100%;
+      background: linear-gradient(180deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+    }
+
+    /* Hero section styles */
+    .hero {
+      background: linear-gradient(135deg, #2b8ea2 0%, #82c4d8 100%);
+      color: white;
+      padding: 3rem 1rem;
+      text-align: center;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .hero .icon {
+      font-size: 1.5rem;
+    }
+
+    .hero p {
+      margin-top: 0.5rem;
+      font-weight: 300;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Main chat section */
+    #chat-section {
+      padding: 2rem 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #chat-section h2 {
+      margin: 0;
+      font-size: 1.5rem;
+      color: var(--primary-color);
+    }
+
+    .chat-description {
+      margin: 0.5rem 0 1.5rem;
+      font-size: 0.9rem;
+      color: #4b5563;
+      text-align: center;
+      max-width: 600px;
+    }
+
+    #chat-container {
+      width: 100%;
+      max-width: var(--max-chat-width);
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      min-height: 380px;
+    }
+
+    /* Messages area */
+    .messages {
+      flex: 1;
+      padding: 1rem;
+      overflow-y: auto;
+      max-height: 400px;
+    }
+
+    /* Each message wrapper holds avatar and bubble */
+    .message-wrapper {
+      display: flex;
+      margin-bottom: 0.75rem;
+      align-items: flex-end;
+    }
+
+    .message-wrapper.assistant {
+      flex-direction: row;
+    }
+
+    .message-wrapper.user {
+      flex-direction: row-reverse;
+    }
+
+    .message-wrapper .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      overflow: hidden;
+      margin: 0 0.5rem;
+      flex-shrink: 0;
+    }
+
+    .message-wrapper .avatar img,
+    .message-wrapper .avatar i {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      color: var(--primary-color);
+    }
+
+    /* Message bubble */
+    .message-wrapper .message {
+      max-width: 70%;
+      padding: 0.75rem 1rem;
+      border-radius: var(--border-radius);
+      line-height: 1.4;
+      font-size: 0.95rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .message-wrapper.assistant .message {
+      background: var(--assistant-bg);
+      color: var(--text-color);
+      border-bottom-left-radius: 0;
+    }
+
+    .message-wrapper.user .message {
+      background: var(--user-bg);
+      color: var(--text-color);
+      border-bottom-right-radius: 0;
+    }
+
+    /* Input area */
+    .input-wrapper {
+      display: flex;
+      align-items: center;
+      border-top: 1px solid #e5e7eb;
+      padding: 0.5rem;
+      background: #f9fafb;
+    }
+
+    #user-input {
+      flex-grow: 1;
+      border: none;
+      background: transparent;
+      font-size: 1rem;
+      padding: 0.5rem;
+      color: var(--text-color);
+    }
+
+    #user-input:focus {
+      outline: none;
+    }
+
+    #send-btn {
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 0.6rem 0.8rem;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s ease;
+    }
+
+    #send-btn:hover {
+      background: #226b80;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.8rem;
+      color: #6b7280;
+    }
+
+    .disclaimer {
+      margin: 0;
+    }
+  </style>
+
+  <!-- Embedded script -->
+  <script>
+    /*
+     * Script for the Stock Assistant demo.
+     * Provides a simple chat interface that generates placeholder stock responses
+     * without calling any external services. This is purely for demonstration
+     * purposes and should not be used as a real source of financial information.
+     */
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const messagesContainer = document.getElementById('messages');
+      const userInput = document.getElementById('user-input');
+      const sendBtn = document.getElementById('send-btn');
+
+      // Icons from Font Awesome will be used instead of external avatar images
+      const assistantIconClass = 'fa-robot';
+      const userIconClass = 'fa-user-circle';
+
+      // Predefined stock data to showcase responses. In a real application this
+      // would be fetched from an API.
+      const stockData = {
+        AAPL: {
+          price: 175.12,
+          outlook: 'steady growth with consistent earnings',
+          company: 'Apple Inc.'
+        },
+        TSLA: {
+          price: 210.73,
+          outlook: 'volatile but long\u2011term potential remains high',
+          company: 'Tesla, Inc.'
+        },
+        MSFT: {
+          price: 329.65,
+          outlook: 'strong fundamentals and diversified revenue streams',
+          company: 'Microsoft Corporation'
+        },
+        GOOGL: {
+          price: 131.29,
+          outlook: 'solid performance with continued advertising dominance',
+          company: 'Alphabet Inc.'
+        }
+      };
+
+      /**
+       * Append a message to the chat container.
+       * @param {string} text The message text.
+       * @param {'user'|'assistant'} role Who is sending the message.
+       */
+      function appendMessage(text, role) {
+        const wrapper = document.createElement('div');
+        wrapper.classList.add('message-wrapper', role);
+        const avatar = document.createElement('div');
+        avatar.classList.add('avatar');
+        // Use Font Awesome icons for avatars
+        const icon = document.createElement('i');
+        icon.classList.add('fa-solid');
+        icon.classList.add(role === 'user' ? userIconClass : assistantIconClass);
+        avatar.appendChild(icon);
+        const bubble = document.createElement('div');
+        bubble.classList.add('message');
+        bubble.textContent = text;
+        wrapper.appendChild(avatar);
+        wrapper.appendChild(bubble);
+        messagesContainer.appendChild(wrapper);
+        // Scroll to bottom when new messages are added
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      }
+
+      /**
+       * Very naive symbol extractor. Looks for uppercase tickers (2\u20115 letters)
+       * within the input string. Returns the first match.
+       * @param {string} text
+       * @returns {string|null}
+       */
+      function extractSymbol(text) {
+        // match uppercase letters between 2 and 5 characters
+        const match = text.match(/\b([A-Z]{2,5})\b/);
+        return match ? match[1] : null;
+      }
+
+      /**
+       * Generate a placeholder response based on the user input. If a known
+       * symbol is detected, returns a canned response from stockData. Otherwise
+       * acknowledges the question generically.
+       * @param {string} message
+       * @returns {string}
+       */
+      function generateResponse(message) {
+        const symbol = extractSymbol(message);
+        if (symbol && stockData[symbol]) {
+          const data = stockData[symbol];
+          return `Here\u2019s a quick overview for ${symbol} (${data.company}): the latest price is $${data.price.toFixed(2)} per share and the general outlook is ${data.outlook}. Remember, this is only a basic summary and not investment advice.`;
+        }
+        // greet the user if they say hello
+        if (/\bhello\b|hi|hey/i.test(message)) {
+          return 'Hello! Ask me about a stock by its ticker symbol (e.g. AAPL or TSLA) and I\u2019ll share a brief overview.';
+        }
+        // default generic response
+        return 'I\u2019m not sure how to help with that. Please ask about a stock by its ticker symbol (e.g. \u201cWhat is the outlook for AAPL?\u201d).';
+      }
+
+      function sendMessage() {
+        const text = userInput.value.trim();
+        if (!text) return;
+        appendMessage(text, 'user');
+        userInput.value = '';
+        // delay assistant reply to mimic thinking
+        setTimeout(() => {
+          const reply = generateResponse(text);
+          appendMessage(reply, 'assistant');
+        }, 600);
+      }
+
+      // Send message on button click
+      sendBtn.addEventListener('click', sendMessage);
+      // Also send on Enter key
+      userInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          sendMessage();
+        }
+      });
+    });
+  </script>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-content">
+      <h1><span class="icon"><i class="fa-solid fa-chart-line"></i></span> Stock Assistant</h1>
+      <p>Your friendly AI helper for basic stock information (for demonstration only).</p>
+    </div>
+  </header>
+
+  <main>
+    <section id="chat-section">
+      <h2>Assistant Chat</h2>
+      <p class="chat-description">Ask me about a stock symbol (e.g. AAPL, TSLA) and I'll give you a simple overview. This demo is not real financial advice.</p>
+      <div id="chat-container">
+        <div id="messages" class="messages"></div>
+        <div class="input-wrapper">
+          <input id="user-input" type="text" autocomplete="off" placeholder="Type your message..." />
+          <button id="send-btn" aria-label="Send message">
+            <i class="fa-solid fa-paper-plane"></i>
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p class="disclaimer">This site is for demonstration purposes only and does not provide real-time stock data or financial advice.</p>
+  </footer>
+</body>
+</html>
